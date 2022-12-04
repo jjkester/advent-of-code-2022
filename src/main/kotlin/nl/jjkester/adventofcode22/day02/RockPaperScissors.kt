@@ -7,8 +7,15 @@ import nl.jjkester.adventofcode22.Implementation
 import nl.jjkester.adventofcode22.Input
 import nl.jjkester.adventofcode22.toPair
 
+/**
+ * https://adventofcode.com/2022/day/2
+ */
 object RockPaperScissors : Implementation<Flow<Pair<Hand, Instruction>>> {
 
+    /**
+     * Input modeled as a pair of the hand sign that the elf will show and the instruction (part 2 concept) for the
+     * player.
+     */
     override suspend fun prepareInput(input: Input): Flow<Pair<Hand, Instruction>> = input.readLines()
         .map { line ->
             line.split(' ')
@@ -16,16 +23,46 @@ object RockPaperScissors : Implementation<Flow<Pair<Hand, Instruction>>> {
         }
         .map { (left, right) -> Hand.parse(left) to Instruction.parse(right) }
 
+    /**
+     * Calculates the total score of the player when interpreting the instruction as a hand sign.
+     */
     suspend fun totalScoreWithHandStrategy(strategy: Flow<Pair<Hand, Instruction>>) = strategy
         .map { (left, right) -> turn(left, right.asHand()) }
         .reduce { accumulator, value -> accumulator + value }
 
+    /**
+     * Calculates the total score of the player when interpreting the instruction as a win/draw/lose situation.
+     */
     suspend fun totalScoreWithOutcomeStrategy(strategy: Flow<Pair<Hand, Instruction>>) = strategy
         .map { (left, right) -> turn(left, left selectCounter right) }
         .reduce { accumulator, value -> accumulator + value }
 
-    private fun turn(left: Hand, right: Hand): Int = (left scoreAgainst right) + right.score
+    /**
+     * Calculates the points that the player ([right]) scores in a turn.
+     */
+    private fun turn(left: Hand, right: Hand): Int = when (left) {
+        Hand.Paper -> when (right) {
+            Hand.Paper -> Score.draw
+            Hand.Rock -> Score.lose
+            Hand.Scissors -> Score.win
+        }
 
+        Hand.Rock -> when (right) {
+            Hand.Paper -> Score.win
+            Hand.Rock -> Score.draw
+            Hand.Scissors -> Score.lose
+        }
+
+        Hand.Scissors -> when (right) {
+            Hand.Paper -> Score.lose
+            Hand.Rock -> Score.win
+            Hand.Scissors -> Score.draw
+        }
+    } + right.score
+
+    /**
+     * Selects the correct hand signal to end up in a win/draw/lose situation as modeled by the [instruction].
+     */
     private infix fun Hand.selectCounter(instruction: Instruction): Hand = when (this) {
         Hand.Paper -> when (instruction) {
             Instruction.Lose -> Hand.Rock
@@ -44,27 +81,9 @@ object RockPaperScissors : Implementation<Flow<Pair<Hand, Instruction>>> {
         }
     }
 
-    private infix fun Hand.scoreAgainst(other: Hand): Int = when (this) {
-        Hand.Paper -> when (other) {
-            Hand.Paper -> Score.draw
-            Hand.Rock -> Score.lose
-            Hand.Scissors -> Score.win
-        }
-        Hand.Rock -> when (other) {
-            Hand.Paper -> Score.win
-            Hand.Rock -> Score.draw
-            Hand.Scissors -> Score.lose
-        }
-        Hand.Scissors -> when (other) {
-            Hand.Paper -> Score.lose
-            Hand.Rock -> Score.win
-            Hand.Scissors -> Score.draw
-        }
-    }
-
-    private operator fun Pair<Int, Int>.plus(other: Pair<Int, Int>): Pair<Int, Int> =
-        this.first + other.first to this.second + other.second
-
+    /**
+     * Holds the score for the three outcomes of a turn.
+     */
     private object Score {
         const val lose = 0
         const val draw = 3
@@ -72,11 +91,17 @@ object RockPaperScissors : Implementation<Flow<Pair<Hand, Instruction>>> {
     }
 }
 
+/**
+ * Models the instruction for the player to [Win], [Draw] or [Lose] the game.
+ */
 sealed class Instruction {
     object Lose : Instruction()
     object Draw : Instruction()
     object Win : Instruction()
 
+    /**
+     * Hand value corresponding to this instruction when interpreted as hand sign.
+     */
     fun asHand(): Hand = when (this) {
         Lose -> Hand.Rock
         Draw -> Hand.Paper
@@ -93,6 +118,9 @@ sealed class Instruction {
     }
 }
 
+/**
+ * Models a hand sign ([Rock], [Paper] or [Scissors]) with its individual [score] when playing it.
+ */
 sealed class Hand(val score: Int) {
     object Rock : Hand(1)
     object Paper : Hand(2)
