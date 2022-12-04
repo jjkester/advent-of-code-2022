@@ -13,13 +13,7 @@ class RockPaperScissorsTest {
 
     @Test
     fun testTotalScoreWithHandsStrategy() = runTest {
-        val input = StringInput(
-            """
-            A Y
-            B X
-            C Z
-        """.trimIndent()
-        )
+        val input = StringInput(example)
         val preparedInput = RockPaperScissors.prepareInput(input)
 
         assertThat { RockPaperScissors.totalScoreWithHandStrategy(preparedInput) }
@@ -29,17 +23,19 @@ class RockPaperScissorsTest {
 
     @Test
     fun testTotalScoreWithOutcomeStrategy() = runTest {
-        val input = StringInput(
-            """
-            A Y
-            B X
-            C Z
-        """.trimIndent()
-        )
+        val input = StringInput(example)
         val preparedInput = RockPaperScissors.prepareInput(input)
 
         assertThat { RockPaperScissors.totalScoreWithOutcomeStrategy(preparedInput) }
             .isSuccess()
             .isEqualTo(12)
+    }
+
+    companion object {
+        private val example = """
+            A Y
+            B X
+            C Z
+        """.trimIndent()
     }
 }
