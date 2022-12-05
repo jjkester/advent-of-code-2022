@@ -31,6 +31,10 @@ inline fun <T> Flow<T>.chunkedBy(crossinline predicate: (T) -> Boolean): Flow<Li
             buffer.add(item)
         }
     }
+
+    if (buffer.isNotEmpty()) {
+        emit(buffer)
+    }
 }
 
 fun <T> Collection<T>.toPair(): Pair<T, T> {

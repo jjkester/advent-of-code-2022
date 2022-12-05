@@ -129,7 +129,9 @@ private class ListCommand(private val aoc: AdventOfCode) : Subcommand(
         val days = aoc.days.sortedBy { it.date }
 
         days.forEach { day ->
-            println("  Day ${day.date.dayOfMonth} (${day.date})")
+            val url = "https://adventofcode.com/${day.date.year}/day/${day.date.dayOfMonth}"
+
+            println("  Day ${day.date.dayOfMonth} (${day.date}) - $url")
             println("    < ${day.input.format()}")
 
             day.parts.forEach { part ->

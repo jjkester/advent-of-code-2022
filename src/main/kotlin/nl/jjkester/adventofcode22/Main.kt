@@ -6,6 +6,7 @@ import nl.jjkester.adventofcode22.day01.CalorieCounting
 import nl.jjkester.adventofcode22.day02.RockPaperScissors
 import nl.jjkester.adventofcode22.day03.RucksackReorganization
 import nl.jjkester.adventofcode22.day04.CampCleanup
+import nl.jjkester.adventofcode22.day05.SupplyStacks
 
 fun main(args: Array<String>) {
     adventOfCode(2022) {
@@ -30,6 +31,12 @@ fun main(args: Array<String>) {
         day(4) implementedBy CampCleanup through {
             partOne { numberOfFullyContainedRanges(it) }
             partTwo { numberOfOverlappingRanges(it) }
+            solveFor("input.txt")
+        }
+
+        day(5) implementedBy SupplyStacks through {
+            partOne { topOfStacks(it.first, it.second, false) }
+            partTwo { topOfStacks(it.first, it.second, true) }
             solveFor("input.txt")
         }
     }.cli(args)
