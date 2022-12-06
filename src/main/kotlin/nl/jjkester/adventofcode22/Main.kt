@@ -7,6 +7,7 @@ import nl.jjkester.adventofcode22.day02.RockPaperScissors
 import nl.jjkester.adventofcode22.day03.RucksackReorganization
 import nl.jjkester.adventofcode22.day04.CampCleanup
 import nl.jjkester.adventofcode22.day05.SupplyStacks
+import nl.jjkester.adventofcode22.day06.TuningTrouble
 
 fun main(args: Array<String>) {
     adventOfCode(2022) {
@@ -37,6 +38,12 @@ fun main(args: Array<String>) {
         day(5) implementedBy SupplyStacks through {
             partOne { topOfStacks(it.first, it.second, false) }
             partTwo { topOfStacks(it.first, it.second, true) }
+            solveFor("input.txt")
+        }
+
+        day(6) implementedBy TuningTrouble through {
+            partOne { offsetToFirstDistinctGroup(it, 4) }
+            partTwo { offsetToFirstDistinctGroup(it, 14) }
             solveFor("input.txt")
         }
     }.cli(args)

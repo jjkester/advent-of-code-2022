@@ -49,6 +49,13 @@ private class RunCommand(private val aoc: AdventOfCode) : Subcommand(
         description = "Time the execution of each day and part"
     ).default(false)
 
+    private val stacktrace by option(
+        type = ArgType.Boolean,
+        fullName = "stacktrace",
+        shortName = "t",
+        description = "Print stacktrace when execution fails"
+    ).default(false)
+
     private val currentPuzzleDay: LocalDate
         get() = Instant.now().atOffset(ZoneOffset.ofHours(-5)).toLocalDate()
 
@@ -74,23 +81,31 @@ private class RunCommand(private val aoc: AdventOfCode) : Subcommand(
 
             day.parts.forEach { part ->
                 print("  ${"*".repeat(part.number)}${" ".repeat(2 - part.number)}  ")
-                val (output, duration) = day.execution.runTimed(part, day.input)
-                println(output.format())
-                if (benchmark) println("      @ $duration")
+                day.execution.runTimed(part, day.input)
+                    .onSuccess { (output, duration) ->
+                        println(output.format())
+                        if (benchmark) println("      @ $duration")
+                    }
+                    .onFailure { exception ->
+                        println("Execution failed!")
+                        if (stacktrace) exception.printStackTrace()
+                    }
             }
         }
     }
 
     @OptIn(ExperimentalTime::class)
     private fun ExecutionUnit<*>.runTimed(part: Part, input: Input) = runBlocking {
-        measureTimedValue { part.run(input) }
+        runCatching {
+            measureTimedValue { part.run(input) }
+        }
     }
 
     companion object {
         fun dayOptionChoice(days: Collection<Day>) = ArgType.Choice(
             choices = days.map { DayOption.Day(it.date.dayOfMonth) } + listOf(DayOption.Latest, DayOption.All),
             toVariant = { string ->
-                when(string.lowercase()) {
+                when (string.lowercase()) {
                     "latest" -> DayOption.Latest
                     "all" -> DayOption.All
                     "today" -> DayOption.Today
