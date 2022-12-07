@@ -55,6 +55,17 @@ fun <T> Flow<T>.windowed(size: Int, partialWindows: Boolean = false): Flow<List<
     }
 }
 
+inline fun <T, reified R : T> Collection<T>.partitionIsInstance(): Pair<List<R>, List<T>> {
+    val first = mutableListOf<R>()
+    val second = mutableListOf<T>()
+
+    forEach {
+        if (it is R) first.add(it) else second.add(it)
+    }
+
+    return first to second
+}
+
 fun <T> Collection<T>.toPair(): Pair<T, T> {
     check(size == 2) {
         "Collection with more than two items cannot be converted to a pair"
