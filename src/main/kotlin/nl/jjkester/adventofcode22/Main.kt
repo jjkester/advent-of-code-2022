@@ -9,6 +9,7 @@ import nl.jjkester.adventofcode22.day04.CampCleanup
 import nl.jjkester.adventofcode22.day05.SupplyStacks
 import nl.jjkester.adventofcode22.day06.TuningTrouble
 import nl.jjkester.adventofcode22.day07.NoSpaceLeftOnDevice
+import nl.jjkester.adventofcode22.day08.TreetopTreeHouse
 
 fun main(args: Array<String>) {
     adventOfCode(2022) {
@@ -51,6 +52,12 @@ fun main(args: Array<String>) {
         day(7) implementedBy NoSpaceLeftOnDevice through {
             partOne { totalSizeOfSmallDirectories(it) }
             partTwo { sizeOfDirectoryToDelete(it) }
+            solveFor("input.txt")
+        }
+
+        day(8) implementedBy TreetopTreeHouse through {
+            partOne { numberOfVisibleTrees(it) }
+            partTwo { highestScenicScore(it) }
             solveFor("input.txt")
         }
     }.cli(args)
