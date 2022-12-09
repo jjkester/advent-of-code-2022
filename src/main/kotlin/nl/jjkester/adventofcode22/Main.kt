@@ -10,6 +10,7 @@ import nl.jjkester.adventofcode22.day05.SupplyStacks
 import nl.jjkester.adventofcode22.day06.TuningTrouble
 import nl.jjkester.adventofcode22.day07.NoSpaceLeftOnDevice
 import nl.jjkester.adventofcode22.day08.TreetopTreeHouse
+import nl.jjkester.adventofcode22.day09.RopeBridge
 
 fun main(args: Array<String>) {
     adventOfCode(2022) {
@@ -58,6 +59,11 @@ fun main(args: Array<String>) {
         day(8) implementedBy TreetopTreeHouse through {
             partOne { numberOfVisibleTrees(it) }
             partTwo { highestScenicScore(it) }
+            solveFor("input.txt")
+        }
+
+        day(9) implementedBy RopeBridge through {
+            partOne { numberOfTailRopePositions(it) }
             solveFor("input.txt")
         }
     }.cli(args)
