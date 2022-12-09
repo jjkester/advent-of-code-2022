@@ -63,7 +63,8 @@ fun main(args: Array<String>) {
         }
 
         day(9) implementedBy RopeBridge through {
-            partOne { numberOfTailRopePositions(it) }
+            partOne { numberOfTailRopePositions(it, 2) }
+            partTwo { numberOfTailRopePositions(it, 10) }
             solveFor("input.txt")
         }
     }.cli(args)

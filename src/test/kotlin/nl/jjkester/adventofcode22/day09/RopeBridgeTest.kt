@@ -4,6 +4,8 @@ import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import assertk.assertions.isSuccess
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import nl.jjkester.adventofcode22.StringInput
@@ -13,7 +15,7 @@ class RopeBridgeTest {
 
     @Test
     fun testPrepareInput() = runTest {
-        val input = StringInput(example)
+        val input = StringInput(example1)
 
         assertThat { RopeBridge.prepareInput(input).toList() }
             .isSuccess()
@@ -46,11 +48,16 @@ class RopeBridgeTest {
     }
 
     @Test
-    fun testTailRopePositions() = runTest {
-        val input = StringInput(example)
+    fun testRopeKnotPositions2() = runTest {
+        val input = StringInput(example1)
         val preparedInput = RopeBridge.prepareInput(input)
 
-        assertThat { RopeBridge.tailRopePositions(Rope.start, preparedInput).toList() }
+        assertThat {
+            RopeBridge.ropeKnotPositions(Rope(2), preparedInput)
+                .filter { it.index == 1 }
+                .map { it.value.x to it.value.y }
+                .toList()
+        }
             .isSuccess()
             .containsExactly(
                 0 to 0,
@@ -82,17 +89,60 @@ class RopeBridgeTest {
     }
 
     @Test
-    fun testNumberOfTailRopePositions() = runTest {
-        val input = StringInput(example)
+    fun testRopeKnotPositions10() = runTest {
+        val input = StringInput(example2)
         val preparedInput = RopeBridge.prepareInput(input)
 
-        assertThat { RopeBridge.numberOfTailRopePositions(preparedInput) }
+        assertThat {
+            RopeBridge.ropeKnotPositions(Rope(10), preparedInput)
+                .filter { it.index == 9 }
+                .map { it.value.x to it.value.y }
+                .toList()
+                .filterIndexed { index, _ -> index in listOf(0, 5, 13, 21, 24, 41) }
+        }
+            .isSuccess()
+            .containsExactly(
+                0 to 0,
+                0 to 0,
+                0 to 0,
+                1 to 3,
+                1 to 3,
+                5 to 5,
+            )
+    }
+
+    @Test
+    fun testNumberOfTailRopePositions2() = runTest {
+        val input = StringInput(example1)
+        val preparedInput = RopeBridge.prepareInput(input)
+
+        assertThat { RopeBridge.numberOfTailRopePositions(preparedInput, 2) }
             .isSuccess()
             .isEqualTo(13)
     }
 
+    @Test
+    fun testNumberOfTailRopePositions10Small() = runTest {
+        val input = StringInput(example1)
+        val preparedInput = RopeBridge.prepareInput(input)
+
+        assertThat { RopeBridge.numberOfTailRopePositions(preparedInput, 10) }
+            .isSuccess()
+            .isEqualTo(1)
+    }
+
+    @Test
+    fun testNumberOfTailRopePositions10Large() = runTest {
+        val input = StringInput(example2)
+        val preparedInput = RopeBridge.prepareInput(input)
+
+        assertThat { RopeBridge.numberOfTailRopePositions(preparedInput, 10) }
+            .isSuccess()
+            .isEqualTo(36)
+    }
+
     companion object {
-        private val example = """
+        private val example1 = """
             R 4
             U 4
             L 3
@@ -101,6 +151,17 @@ class RopeBridgeTest {
             D 1
             L 5
             R 2
+        """.trimIndent()
+
+        private val example2 = """
+            R 5
+            U 8
+            L 8
+            D 3
+            R 17
+            D 10
+            L 25
+            U 20
         """.trimIndent()
     }
 }
