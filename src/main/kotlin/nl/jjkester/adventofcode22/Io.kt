@@ -41,17 +41,19 @@ data class ResourceInput(val resourcePath: String) : Input {
 }
 
 interface Output {
-    fun format(): String
+    fun format(continuationLineIndent: Int = 0): String
 }
 
 data class StringOutput(val value: String) : Output {
-    override fun format(): String = "\"$value\""
+    override fun format(continuationLineIndent: Int): String = "\"$value\""
+        .prependIndent(" ".repeat(continuationLineIndent))
+        .trimStart()
 }
 
 data class NumberOutput(val value: Number) : Output {
-    override fun format(): String = "$value"
+    override fun format(continuationLineIndent: Int): String = "$value"
 }
 
 val EmptyOutput = object : Output {
-    override fun format(): String = "\u2205"
+    override fun format(continuationLineIndent: Int): String = "\u2205"
 }

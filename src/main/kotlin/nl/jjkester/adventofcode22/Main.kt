@@ -11,6 +11,7 @@ import nl.jjkester.adventofcode22.day06.TuningTrouble
 import nl.jjkester.adventofcode22.day07.NoSpaceLeftOnDevice
 import nl.jjkester.adventofcode22.day08.TreetopTreeHouse
 import nl.jjkester.adventofcode22.day09.RopeBridge
+import nl.jjkester.adventofcode22.day10.CathodeRayTube
 
 fun main(args: Array<String>) {
     adventOfCode(2022) {
@@ -65,6 +66,12 @@ fun main(args: Array<String>) {
         day(9) implementedBy RopeBridge through {
             partOne { numberOfTailRopePositions(it, 2) }
             partTwo { numberOfTailRopePositions(it, 10) }
+            solveFor("input.txt")
+        }
+
+        day(10) implementedBy CathodeRayTube through {
+            partOne { it.sumOfSignalStrengths() }
+            partTwo { it.renderScreen() }
             solveFor("input.txt")
         }
     }.cli(args)

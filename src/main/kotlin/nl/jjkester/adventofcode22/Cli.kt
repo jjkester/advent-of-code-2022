@@ -83,7 +83,7 @@ private class RunCommand(private val aoc: AdventOfCode) : Subcommand(
                 print("  ${"*".repeat(part.number)}${" ".repeat(2 - part.number)}  ")
                 day.execution.runTimed(part, day.input)
                     .onSuccess { (output, duration) ->
-                        println(output.format())
+                        println(output.format(7))
                         if (benchmark) println("      @ $duration")
                     }
                     .onFailure { exception ->
