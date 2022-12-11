@@ -12,6 +12,7 @@ import nl.jjkester.adventofcode22.day07.NoSpaceLeftOnDevice
 import nl.jjkester.adventofcode22.day08.TreetopTreeHouse
 import nl.jjkester.adventofcode22.day09.RopeBridge
 import nl.jjkester.adventofcode22.day10.CathodeRayTube
+import nl.jjkester.adventofcode22.day11.MonkeyInTheMiddle
 
 fun main(args: Array<String>) {
     adventOfCode(2022) {
@@ -72,6 +73,12 @@ fun main(args: Array<String>) {
         day(10) implementedBy CathodeRayTube through {
             partOne { it.sumOfSignalStrengths() }
             partTwo { it.renderScreen() }
+            solveFor("input.txt")
+        }
+
+        day(11) implementedBy MonkeyInTheMiddle through {
+            partOne { it.levelOfMonkeyBusiness(20, true) }
+            partTwo { it.levelOfMonkeyBusiness(10_000, false) }
             solveFor("input.txt")
         }
     }.cli(args)
