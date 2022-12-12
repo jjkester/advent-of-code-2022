@@ -13,6 +13,7 @@ import nl.jjkester.adventofcode22.day08.TreetopTreeHouse
 import nl.jjkester.adventofcode22.day09.RopeBridge
 import nl.jjkester.adventofcode22.day10.CathodeRayTube
 import nl.jjkester.adventofcode22.day11.MonkeyInTheMiddle
+import nl.jjkester.adventofcode22.day12.HillClimbingAlgorithm
 
 fun main(args: Array<String>) {
     adventOfCode(2022) {
@@ -79,6 +80,12 @@ fun main(args: Array<String>) {
         day(11) implementedBy MonkeyInTheMiddle through {
             partOne { it.levelOfMonkeyBusiness(20, true) }
             partTwo { it.levelOfMonkeyBusiness(10_000, false) }
+            solveFor("input.txt")
+        }
+
+        day(12) implementedBy HillClimbingAlgorithm through {
+            partOne { it.shortestSteps() }
+            partTwo { it.shortestTrail() }
             solveFor("input.txt")
         }
     }.cli(args)
