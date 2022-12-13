@@ -14,6 +14,7 @@ import nl.jjkester.adventofcode22.day09.RopeBridge
 import nl.jjkester.adventofcode22.day10.CathodeRayTube
 import nl.jjkester.adventofcode22.day11.MonkeyInTheMiddle
 import nl.jjkester.adventofcode22.day12.HillClimbingAlgorithm
+import nl.jjkester.adventofcode22.day13.DistressSignal
 
 fun main(args: Array<String>) {
     adventOfCode(2022) {
@@ -86,6 +87,12 @@ fun main(args: Array<String>) {
         day(12) implementedBy HillClimbingAlgorithm through {
             partOne { it.shortestSteps() }
             partTwo { it.shortestTrail() }
+            solveFor("input.txt")
+        }
+
+        day(13) implementedBy DistressSignal through {
+            partOne { it.sumOfIndicesInRightOrder() }
+            partTwo { it.decoderKey() }
             solveFor("input.txt")
         }
     }.cli(args)
