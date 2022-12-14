@@ -15,6 +15,7 @@ import nl.jjkester.adventofcode22.day10.CathodeRayTube
 import nl.jjkester.adventofcode22.day11.MonkeyInTheMiddle
 import nl.jjkester.adventofcode22.day12.HillClimbingAlgorithm
 import nl.jjkester.adventofcode22.day13.DistressSignal
+import nl.jjkester.adventofcode22.day14.RegolithReservoir
 
 fun main(args: Array<String>) {
     adventOfCode(2022) {
@@ -93,6 +94,12 @@ fun main(args: Array<String>) {
         day(13) implementedBy DistressSignal through {
             partOne { it.sumOfIndicesInRightOrder() }
             partTwo { it.decoderKey() }
+            solveFor("input.txt")
+        }
+
+        day(14) implementedBy RegolithReservoir through {
+            partOne { it.unitsOfSandInCave() }
+            partTwo { it.unitsOfSandUntilRest() }
             solveFor("input.txt")
         }
     }.cli(args)
