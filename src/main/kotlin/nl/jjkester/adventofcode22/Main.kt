@@ -16,6 +16,7 @@ import nl.jjkester.adventofcode22.day11.MonkeyInTheMiddle
 import nl.jjkester.adventofcode22.day12.HillClimbingAlgorithm
 import nl.jjkester.adventofcode22.day13.DistressSignal
 import nl.jjkester.adventofcode22.day14.RegolithReservoir
+import nl.jjkester.adventofcode22.day15.BeaconExclusionZone
 
 fun main(args: Array<String>) {
     adventOfCode(2022) {
@@ -100,6 +101,12 @@ fun main(args: Array<String>) {
         day(14) implementedBy RegolithReservoir through {
             partOne { it.unitsOfSandInCave() }
             partTwo { it.unitsOfSandUntilRest() }
+            solveFor("input.txt")
+        }
+
+        day(15) implementedBy BeaconExclusionZone through {
+            partOne { it.positionsInRowWhereBeaconCannotBePresent(2_000_000) }
+            partTwo { it.distressSignalTuningFrequency(0..4_000_000) }
             solveFor("input.txt")
         }
     }.cli(args)
