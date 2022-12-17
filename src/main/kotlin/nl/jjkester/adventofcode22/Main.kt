@@ -18,6 +18,7 @@ import nl.jjkester.adventofcode22.day13.DistressSignal
 import nl.jjkester.adventofcode22.day14.RegolithReservoir
 import nl.jjkester.adventofcode22.day15.BeaconExclusionZone
 import nl.jjkester.adventofcode22.day16.ProboscideaVolcanium
+import nl.jjkester.adventofcode22.day17.PyroclasticFlow
 
 fun main(args: Array<String>) {
     adventOfCode(2022) {
@@ -114,6 +115,11 @@ fun main(args: Array<String>) {
         day(16) implementedBy ProboscideaVolcanium through {
             partOne { it.maxPressureReleaseBeforeEruption(  false) }
             partTwo { it.maxPressureReleaseBeforeEruption(true) }
+            solveFor("input.txt")
+        }
+
+        day(17) implementedBy PyroclasticFlow through {
+            partOne { it.heightAfterRocks(2022) }
             solveFor("input.txt")
         }
     }.cli(args)
