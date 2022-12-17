@@ -27,8 +27,9 @@ object ProboscideaVolcanium : Implementation<Flow<Valve>> {
     /**
      * Calculates the maximum pressure that can be released before the volcano erupts.
      */
-    suspend fun Flow<Valve>.maxPressureReleaseBeforeEruption(): Int = toList().run {
-        RecursiveOptimizer(this).optimizeMaxPressure(single { it.id == "AA" }, 30)
+    suspend fun Flow<Valve>.maxPressureReleaseBeforeEruption(useElephant: Boolean): Int = toList().run {
+        val (time, workers) = if (useElephant) 26 to 2 else 30 to 1
+        RecursiveOptimizer(this).optimizeMaxPressure(single { it.id == "AA" }, time, workers)
     }
 
     private fun List<Valve>.floydWarshall(): Map<Pair<Valve, Valve>, Int> =
@@ -68,29 +69,30 @@ object ProboscideaVolcanium : Implementation<Flow<Valve>> {
     private class RecursiveOptimizer(valves: List<Valve>) {
         private val distances = valves.floydWarshall()
 
-        suspend fun optimizeMaxPressure(startValve: Valve, time: Int): Int = coroutineScope {
+        suspend fun optimizeMaxPressure(startValve: Valve, time: Int, workers: Int): Int = coroutineScope {
             withContext(Dispatchers.Default) {
-                optimizeMaxPressure(startValve, time, emptySet())
+                optimizeMaxPressure(List(workers) { Worker(startValve, time) }, emptySet())
             }
         }
 
         private suspend fun optimizeMaxPressure(
-            currentValve: Valve,
-            timeLeft: Int,
+            workers: List<Worker>,
             openValves: Set<Valve>
         ): Int = coroutineScope {
-            distances[currentValve]
+            // Get first worker to choose a valve
+            val worker = workers.maxBy { it.timeLeft }
+
+            distances[worker.currentValve]
                 .filter { (valve, _) -> valve.flowRate > 0 && valve !in openValves }
                 .map { (valve, distance) ->
-                    val timeLeftAfterOpening = timeLeft - distance - 1
+                    val timeLeftAfterOpening = worker.timeLeft - distance - 1
 
                     if (timeLeftAfterOpening > 0) {
                         val totalValvePressure = valve.flowRate * timeLeftAfterOpening
 
                         async {
                             val nextContribution = optimizeMaxPressure(
-                                valve,
-                                timeLeftAfterOpening,
+                                workers - worker + Worker(valve, timeLeftAfterOpening),
                                 openValves + valve
                             )
                             totalValvePressure + nextContribution
@@ -103,6 +105,8 @@ object ProboscideaVolcanium : Implementation<Flow<Valve>> {
                 .maxOrNull()
                 ?: 0
         }
+
+        private data class Worker(val currentValve: Valve, val timeLeft: Int)
     }
 }
 

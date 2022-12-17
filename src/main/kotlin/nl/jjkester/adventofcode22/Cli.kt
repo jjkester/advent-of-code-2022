@@ -7,7 +7,10 @@ import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.Subcommand
 import kotlinx.cli.default
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -52,9 +55,16 @@ private class RunCommand(private val aoc: AdventOfCode) : Subcommand(
     private val stacktrace by option(
         type = ArgType.Boolean,
         fullName = "stacktrace",
-        shortName = "t",
+        shortName = "s",
         description = "Print stacktrace when execution fails"
     ).default(false)
+
+    private val timeout by option(
+        type = ArgType.String,
+        fullName = "timeout",
+        shortName = "t",
+        description = "Stop execution after number of seconds"
+    ).default("2s")
 
     private val currentPuzzleDay: LocalDate
         get() = Instant.now().atOffset(ZoneOffset.ofHours(-5)).toLocalDate()
@@ -81,23 +91,33 @@ private class RunCommand(private val aoc: AdventOfCode) : Subcommand(
 
             day.parts.forEach { part ->
                 print("  ${"*".repeat(part.number)}${" ".repeat(2 - part.number)}  ")
-                day.execution.runTimed(part, day.input)
+                val timeoutDuration = Duration.parse("PT$timeout")
+                day.execution.runTimed(part, day.input, timeoutDuration)
                     .onSuccess { (output, duration) ->
                         println(output.format(7))
                         if (benchmark) println("      @ $duration")
                     }
                     .onFailure { exception ->
-                        println("Execution failed!")
-                        if (stacktrace) exception.printStackTrace()
+                        when (exception) {
+                            is TimeoutCancellationException -> println("Timeout!")
+                            else -> {
+                                println("Execution failed!")
+                                if (stacktrace) exception.printStackTrace()
+                            }
+                        }
                     }
             }
         }
     }
 
     @OptIn(ExperimentalTime::class)
-    private fun ExecutionUnit<*>.runTimed(part: Part, input: Input) = runBlocking {
+    private fun ExecutionUnit<*>.runTimed(part: Part, input: Input, timeout: Duration) = runBlocking {
         runCatching {
-            measureTimedValue { part.run(input) }
+            measureTimedValue {
+                withTimeout(timeout.toMillis()) {
+                    part.run(input)
+                }
+            }
         }
     }
 

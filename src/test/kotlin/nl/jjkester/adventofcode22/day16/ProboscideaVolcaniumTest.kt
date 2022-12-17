@@ -11,13 +11,23 @@ import org.junit.jupiter.api.Test
 class ProboscideaVolcaniumTest {
 
     @Test
-    fun testMaxPressureReleaseBeforeEruption() = runTest {
+    fun testMaxPressureReleaseBeforeEruptionWithoutElephant() = runTest {
         val input = StringInput(example)
         val preparedInput = ProboscideaVolcanium.prepareInput(input)
 
-        assertThat { preparedInput.maxPressureReleaseBeforeEruption() }
+        assertThat { preparedInput.maxPressureReleaseBeforeEruption(false) }
             .isSuccess()
             .isEqualTo(1651)
+    }
+
+    @Test
+    fun testMaxPressureReleaseBeforeEruptionWithElephant() = runTest {
+        val input = StringInput(example)
+        val preparedInput = ProboscideaVolcanium.prepareInput(input)
+
+        assertThat { preparedInput.maxPressureReleaseBeforeEruption(true) }
+            .isSuccess()
+            .isEqualTo(1707)
     }
 
     companion object {

@@ -112,7 +112,8 @@ fun main(args: Array<String>) {
         }
 
         day(16) implementedBy ProboscideaVolcanium through {
-            partOne { it.maxPressureReleaseBeforeEruption() }
+            partOne { it.maxPressureReleaseBeforeEruption(  false) }
+            partTwo { it.maxPressureReleaseBeforeEruption(true) }
             solveFor("input.txt")
         }
     }.cli(args)
