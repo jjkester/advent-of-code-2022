@@ -23,56 +23,63 @@ object PyroclasticFlow : Implementation<Flow<Jet>> {
      * Calculates the height of the rocks after the [count] of rocks has dropped.
      */
     suspend fun Flow<Jet>.heightAfterRocks(count: Long): Long = Room(7, toList())
-        .apply {
-            (0L until count).forEach {
-                nextRock()
-                if (it % 100 == 0L) optimize()
-            }
-        }
+        .apply { simulateRocks(count) }
         .height
 }
 
 private class Room(val width: Int, jets: List<Jet>) {
     private var fill: MutableList<BooleanArray> = mutableListOf()
 
-    private var optimizedHeight: Long = 0L
+    private var cachedHeight: Long = 0L
 
     val height: Long
-        get() = optimizedHeight + fill.size
+        get() = cachedHeight + fill.size
 
-    private val jets: Iterator<Jet> = iterator {
+    private val jets: Iterator<IndexedValue<Jet>> = iterator {
         while (true) {
-            jets.forEach { yield(it) }
+            jets.withIndex().forEach { yield(it) }
         }
     }
 
     private val rocks: Iterator<Rock> = iterator {
         while (true) {
-            yield(Rock.Minus(2, height + 3))
-            yield(Rock.Plus(2, height + 3))
-            yield(Rock.InverseL(2, height + 3))
-            yield(Rock.Pipe(2, height + 3))
-            yield(Rock.Square(2, height + 3))
+            yield(Rock.Minus(2, fill.size + 3))
+            yield(Rock.Plus(2, fill.size + 3))
+            yield(Rock.InverseL(2, fill.size + 3))
+            yield(Rock.Pipe(2, fill.size + 3))
+            yield(Rock.Square(2, fill.size + 3))
         }
     }
 
-    fun nextRock() {
-        with(rocks.next()) {
-            while (true) {
-                if (!move(jets.next())) break
+    private val cache = mutableMapOf<CacheKey, CacheValue>()
+
+    fun simulateRocks(count: Long) {
+        var i = 0L
+        while (i < count) {
+            with(rocks.next()) {
+                while (true) {
+                    val (jetIndex, jet) = jets.next()
+                    if (!move(jet)) {
+                        if (i > 1000) {
+                            cache.compute(cacheKey(jetIndex)) { _, value ->
+                                value?.also {
+                                    val iInc = i - it.i
+                                    val heightInc = height - it.height
+
+                                    while (i < count - iInc) {
+                                        i += iInc
+                                        cachedHeight += heightInc
+                                    }
+                                }
+                                CacheValue(i, height)
+                            }
+                        }
+                        break
+                    }
+                }
+                commit()
             }
-            commit()
-        }
-    }
-
-    fun optimize() {
-        val completedRow = fill.asSequence().withIndex().findLast { (_, row) ->
-            row.all { it }
-        }
-
-        if (completedRow != null) {
-            fill = fill.subList(completedRow.index + 1, fill.size)
-            optimizedHeight += completedRow.index + 1
+            i++
         }
     }
 
@@ -93,10 +100,10 @@ private class Room(val width: Int, jets: List<Jet>) {
 
     private fun Rock.commit() {
         coordinates.forEach { (x, y) ->
-            if (fill.lastIndex < y - optimizedHeight) {
-                fill.addAll(List((y - optimizedHeight - fill.lastIndex).toInt()) { BooleanArray(this@Room.width) })
+            if (fill.lastIndex < y) {
+                fill.addAll(List(y - fill.lastIndex) { BooleanArray(this@Room.width) })
             }
-            fill[(y - optimizedHeight).toInt()][x] = true
+            fill[y][x] = true
         }
     }
 
@@ -105,11 +112,23 @@ private class Room(val width: Int, jets: List<Jet>) {
 
     private fun Coordinate.isOccupied(xOffset: Int, yOffset: Int): Boolean = when {
         x + xOffset !in 0 until width -> true
-        y + yOffset < optimizedHeight -> true
+        y + yOffset < 0 -> true
         else -> {
-            fill.getOrNull((y + yOffset - optimizedHeight).toInt())?.get(x + xOffset) ?: false
+            fill.getOrNull(y + yOffset)?.get(x + xOffset) ?: false
         }
     }
+
+    private data class CacheKey(val rockType: String, val jetIndex: Int, val heights: List<Int>)
+
+    private data class CacheValue(val i: Long, val height: Long)
+
+    private fun Rock.cacheKey(jetIndex: Int): CacheKey = CacheKey(
+        this::class.simpleName!!,
+        jetIndex,
+        List(width) { x ->
+            (height - ((fill.lastIndex downTo 0).first { y -> fill[y][x] })).toInt()
+        }
+    )
 }
 
 /**
@@ -133,7 +152,7 @@ sealed class Jet(val xOffset: Int) {
  */
 sealed class Rock private constructor(
     var x: Int,
-    var y: Long,
+    var y: Int,
     val relativeCoordinates: List<Coordinate>
 ) {
 
@@ -141,7 +160,7 @@ sealed class Rock private constructor(
         require(relativeCoordinates.minOf { it.x } == 0) {
             "The left edge must start at x=0"
         }
-        require(relativeCoordinates.minOf { it.y } == 0L) {
+        require(relativeCoordinates.minOf { it.y } == 0) {
             "The bottom edge must start at y=0"
         }
         require(relativeCoordinates.distinct().size == relativeCoordinates.size) {
@@ -152,37 +171,37 @@ sealed class Rock private constructor(
     val coordinates: List<Coordinate>
         get() = relativeCoordinates.map { (x, y) -> Coordinate(x + this.x, y + this.y) }
 
-    class Minus(x: Int, y: Long) : Rock(
+    class Minus(x: Int, y: Int) : Rock(
         x = x,
         y = y,
         relativeCoordinates = listOf(0 by 0, 1 by 0, 2 by 0, 3 by 0)
     )
 
-    class Plus(x: Int, y: Long) : Rock(
+    class Plus(x: Int, y: Int) : Rock(
         x = x,
         y = y,
         relativeCoordinates = listOf(1 by 0, 0 by 1, 1 by 1, 2 by 1, 1 by 2)
     )
 
-    class InverseL(x: Int, y: Long) : Rock(
+    class InverseL(x: Int, y: Int) : Rock(
         x = x,
         y = y,
         relativeCoordinates = listOf(0 by 0, 1 by 0, 2 by 0, 2 by 1, 2 by 2)
     )
 
-    class Pipe(x: Int, y: Long) : Rock(
+    class Pipe(x: Int, y: Int) : Rock(
         x = x,
         y = y,
         relativeCoordinates = listOf(0 by 0, 0 by 1, 0 by 2, 0 by 3)
     )
 
-    class Square(x: Int, y: Long) : Rock(
+    class Square(x: Int, y: Int) : Rock(
         x = x,
         y = y,
         relativeCoordinates = listOf(0 by 0, 1 by 0, 0 by 1, 1 by 1)
     )
 }
 
-data class Coordinate(val x: Int, val y: Long)
+data class Coordinate(val x: Int, val y: Int)
 
-infix fun Int.by(other: Long) = Coordinate(this, other)
+infix fun Int.by(other: Int) = Coordinate(this, other)

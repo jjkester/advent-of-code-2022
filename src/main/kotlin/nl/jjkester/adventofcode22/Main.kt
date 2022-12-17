@@ -120,6 +120,7 @@ fun main(args: Array<String>) {
 
         day(17) implementedBy PyroclasticFlow through {
             partOne { it.heightAfterRocks(2022) }
+            partTwo { it.heightAfterRocks(1_000_000_000_000) }
             solveFor("input.txt")
         }
     }.cli(args)

@@ -20,6 +20,16 @@ class PyroclasticFlowTest {
             .isEqualTo(3068)
     }
 
+    @Test
+    fun testHeightAfterRocksLarge() = runTest {
+        val input = StringInput(example)
+        val preparedInput = PyroclasticFlow.prepareInput(input)
+
+        assertThat { preparedInput.heightAfterRocks(1_000_000_000_000) }
+            .isSuccess()
+            .isEqualTo(1514285714288)
+    }
+
     companion object {
         private const val example = ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>"
     }
