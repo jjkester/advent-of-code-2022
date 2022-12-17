@@ -17,6 +17,7 @@ import nl.jjkester.adventofcode22.day12.HillClimbingAlgorithm
 import nl.jjkester.adventofcode22.day13.DistressSignal
 import nl.jjkester.adventofcode22.day14.RegolithReservoir
 import nl.jjkester.adventofcode22.day15.BeaconExclusionZone
+import nl.jjkester.adventofcode22.day16.ProboscideaVolcanium
 
 fun main(args: Array<String>) {
     adventOfCode(2022) {
@@ -107,6 +108,11 @@ fun main(args: Array<String>) {
         day(15) implementedBy BeaconExclusionZone through {
             partOne { it.positionsInRowWhereBeaconCannotBePresent(2_000_000) }
             partTwo { it.distressSignalTuningFrequency(0..4_000_000) }
+            solveFor("input.txt")
+        }
+
+        day(16) implementedBy ProboscideaVolcanium through {
+            partOne { it.maxPressureReleaseBeforeEruption() }
             solveFor("input.txt")
         }
     }.cli(args)
