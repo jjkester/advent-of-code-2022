@@ -19,6 +19,7 @@ import nl.jjkester.adventofcode22.day14.RegolithReservoir
 import nl.jjkester.adventofcode22.day15.BeaconExclusionZone
 import nl.jjkester.adventofcode22.day16.ProboscideaVolcanium
 import nl.jjkester.adventofcode22.day17.PyroclasticFlow
+import nl.jjkester.adventofcode22.day18.BoilingBoulders
 
 fun main(args: Array<String>) {
     adventOfCode(2022) {
@@ -121,6 +122,12 @@ fun main(args: Array<String>) {
         day(17) implementedBy PyroclasticFlow through {
             partOne { it.heightAfterRocks(2022) }
             partTwo { it.heightAfterRocks(1_000_000_000_000) }
+            solveFor("input.txt")
+        }
+
+        day(18) implementedBy BoilingBoulders through {
+            partOne { it.totalOutsideSurfaceArea(false) }
+            partTwo { it.totalOutsideSurfaceArea(true) }
             solveFor("input.txt")
         }
     }.cli(args)
