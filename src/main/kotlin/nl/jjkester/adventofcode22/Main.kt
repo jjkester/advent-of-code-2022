@@ -20,6 +20,7 @@ import nl.jjkester.adventofcode22.day15.BeaconExclusionZone
 import nl.jjkester.adventofcode22.day16.ProboscideaVolcanium
 import nl.jjkester.adventofcode22.day17.PyroclasticFlow
 import nl.jjkester.adventofcode22.day18.BoilingBoulders
+import nl.jjkester.adventofcode22.day20.GrovePositioningSystem
 
 fun main(args: Array<String>) {
     adventOfCode(2022) {
@@ -128,6 +129,14 @@ fun main(args: Array<String>) {
         day(18) implementedBy BoilingBoulders through {
             partOne { it.totalOutsideSurfaceArea(false) }
             partTwo { it.totalOutsideSurfaceArea(true) }
+            solveFor("input.txt")
+        }
+
+        // TODO: Day 19
+
+        day(20) implementedBy GrovePositioningSystem through {
+            partOne { it.sumOfCoordinates() }
+            partTwo { it.sumOfCoordinates(10, 811589153) }
             solveFor("input.txt")
         }
     }.cli(args)
