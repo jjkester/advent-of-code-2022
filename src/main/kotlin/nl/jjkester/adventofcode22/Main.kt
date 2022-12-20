@@ -20,6 +20,7 @@ import nl.jjkester.adventofcode22.day15.BeaconExclusionZone
 import nl.jjkester.adventofcode22.day16.ProboscideaVolcanium
 import nl.jjkester.adventofcode22.day17.PyroclasticFlow
 import nl.jjkester.adventofcode22.day18.BoilingBoulders
+import nl.jjkester.adventofcode22.day19.NotEnoughMinerals
 import nl.jjkester.adventofcode22.day20.GrovePositioningSystem
 
 fun main(args: Array<String>) {
@@ -132,7 +133,11 @@ fun main(args: Array<String>) {
             solveFor("input.txt")
         }
 
-        // TODO: Day 19
+        day(19) implementedBy NotEnoughMinerals through {
+            partOne { it.sumOfQualityLevels() }
+            partTwo { it.productOfMaximumNumberOfGeodes() }
+            solveFor("input.txt")
+        }
 
         day(20) implementedBy GrovePositioningSystem through {
             partOne { it.sumOfCoordinates() }
