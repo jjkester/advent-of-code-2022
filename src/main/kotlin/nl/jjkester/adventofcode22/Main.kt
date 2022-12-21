@@ -22,6 +22,7 @@ import nl.jjkester.adventofcode22.day17.PyroclasticFlow
 import nl.jjkester.adventofcode22.day18.BoilingBoulders
 import nl.jjkester.adventofcode22.day19.NotEnoughMinerals
 import nl.jjkester.adventofcode22.day20.GrovePositioningSystem
+import nl.jjkester.adventofcode22.day21.MonkeyMatch
 
 fun main(args: Array<String>) {
     adventOfCode(2022) {
@@ -142,6 +143,12 @@ fun main(args: Array<String>) {
         day(20) implementedBy GrovePositioningSystem through {
             partOne { it.sumOfCoordinates() }
             partTwo { it.sumOfCoordinates(10, 811589153) }
+            solveFor("input.txt")
+        }
+
+        day(21) implementedBy MonkeyMatch through {
+            partOne { it.rootValue() }
+            partOne { it.humanValue() }
             solveFor("input.txt")
         }
     }.cli(args)
