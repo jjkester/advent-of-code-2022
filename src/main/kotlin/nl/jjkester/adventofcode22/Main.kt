@@ -23,6 +23,7 @@ import nl.jjkester.adventofcode22.day18.BoilingBoulders
 import nl.jjkester.adventofcode22.day19.NotEnoughMinerals
 import nl.jjkester.adventofcode22.day20.GrovePositioningSystem
 import nl.jjkester.adventofcode22.day21.MonkeyMatch
+import nl.jjkester.adventofcode22.day22.MonkeyMap
 
 fun main(args: Array<String>) {
     adventOfCode(2022) {
@@ -149,6 +150,11 @@ fun main(args: Array<String>) {
         day(21) implementedBy MonkeyMatch through {
             partOne { it.rootValue() }
             partOne { it.humanValue() }
+            solveFor("input.txt")
+        }
+
+        day(22) implementedBy MonkeyMap through {
+            partOne { it.finalPasswordFlat() }
             solveFor("input.txt")
         }
     }.cli(args)
